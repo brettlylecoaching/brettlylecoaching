@@ -1,0 +1,164 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import OfferCards from '../components/OfferCards.astro';
+import Testimonials from '../components/Testimonials.astro';
+import { featuredQuote, services } from '../data/site';
+import { episodeHref } from '../lib/episodes';
+import hero from '../assets/hero-path.jpg';
+import portrait from '../assets/brett-portrait.jpg';
+import cover from '../assets/podcast-cover.png';
+
+const featured = ['2147557522', '2147557527', '2147557524'];
+const episodes = (await getCollection('episodes')).filter((e) => featured.includes(e.data.kajabiId));
+---
+<Base>
+  <div class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow rise">Career success coaching</p>
+        <h1 class="rise">Craft your brand.<br />Set your goal.<br /><span class="accent">Tell your story.</span></h1>
+        <p class="kicker script rise d1">…and find your career success.</p>
+        <p class="lede rise d1">
+          Brett Lyle helps professionals and organizations uncover their brands, build strategic Productive
+          Professional Networks™, and tell their stories in a way that compels others to support them.
+        </p>
+        <div class="cta-row rise d2">
+          <a class="btn solid" href="/contact">Book a free consultation</a>
+          <a class="btn" href="/coaching">Explore coaching</a>
+        </div>
+        <p class="hero-note rise d2"><b>A decade in EMS &amp; healthcare strategy.</b> Now coaching professionals from the firehouse to the C-suite.</p>
+      </div>
+      <div class="arch rise d1">
+        <Image src={hero} alt="A sandy path opening onto a calm sea-glass green ocean under a blue sky" widths={[480, 840]} sizes="(max-width: 880px) 90vw, 420px" loading="eager" fetchpriority="high" />
+        <div class="tag">The path is there. Let’s walk it.</div>
+      </div>
+    </div>
+  </div>
+
+  <figure class="strip band">
+    <blockquote>“{featuredQuote.quote}”</blockquote>
+    <figcaption>{featuredQuote.name}, {featuredQuote.role}</figcaption>
+  </figure>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Find the program that’s right for you</p>
+        <h2>Three ways to work together</h2>
+      </div>
+      <OfferCards />
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap about-grid">
+      <div class="arch about-photo">
+        <Image src={portrait} alt="Brett Lyle seated on stone steps, smiling, in a sea-glass green blouse" widths={[360, 600]} sizes="360px" />
+        <div class="tag script">Hi, I’m Brett!</div>
+      </div>
+      <div>
+        <p class="eyebrow">Meet Brett</p>
+        <h2>People are my passion.</h2>
+        <p class="lead-line">Their stories. Their cultures. Their goals and challenges. Their successes. Their fulfillment.</p>
+        <p class="muted">
+          After a decade in business development and strategy within Emergency Medical Services and healthcare
+          communication technology, Brett found her calling as a Career Success Coach. She’s a natural-born storyteller,
+          creative writer, and podcast host who loves connecting with people, and connecting people to each other.
+        </p>
+        <ul class="services">{services.map((s) => <li>{s}</li>)}</ul>
+        <a class="btn" href="/about">Read Brett’s story</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Client stories</p>
+        <h2>Real people, real next chapters</h2>
+      </div>
+      <Testimonials />
+    </div>
+  </section>
+
+  <section class="podcast">
+    <div class="wrap pod-grid">
+      <Image class="pod-art" src={cover} alt="Emergent Leadership podcast cover art" widths={[340, 500]} sizes="340px" />
+      <div>
+        <p class="eyebrow">The podcast</p>
+        <h2>Emergent Leadership</h2>
+        <p class="script pod-sub">conversations with passionate leaders</p>
+        {episodes.map((ep) => (
+          <a class="ep" href={episodeHref(ep)}>
+            <span class="n" aria-hidden="true">▶</span>
+            <span><b>{ep.data.title}</b>{ep.data.guest && <span>with {ep.data.guest}</span>}</span>
+          </a>
+        ))}
+        <a class="more" href="/podcast">Browse all 21 episodes →</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-band">
+    <div class="wrap inner">
+      <div>
+        <h2>Ready for your next chapter?</h2>
+        <p>The first conversation is free. Tell Brett where you are, and where you want to go.</p>
+      </div>
+      <a class="btn" href="/contact">Book a free consultation</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .hero { padding-block: clamp(40px, 7vw, 72px) 34px; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
+  @media (max-width: 880px) { .hero-grid { grid-template-columns: 1fr; gap: 34px; } }
+  .accent { position: relative; white-space: nowrap; z-index: 0; }
+  .accent::after {
+    content: ''; position: absolute; left: -1%; right: -1%; bottom: 0.08em; height: 0.3em; z-index: -1;
+    background: var(--mint); opacity: 0.55; border-radius: 2px;
+  }
+  .kicker { font-size: clamp(1.5rem, 2.6vw, 1.9rem); margin: 0.5rem 0 0; }
+  .lede { color: var(--muted); margin: 1.3rem 0 1.8rem; font-size: 1.06rem; }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-note { margin-top: 1.6rem; font-size: 0.9rem; color: var(--muted); }
+  .hero-note b { color: var(--ink); }
+  .hero .arch { max-width: 420px; margin-left: auto; }
+  @media (max-width: 880px) { .hero .arch { margin: 0 auto; } }
+
+  .strip { margin: 0; padding: 24px 16px; text-align: center; display: flex; gap: 18px; justify-content: center; align-items: baseline; flex-wrap: wrap; }
+  .strip blockquote { margin: 0; font-family: var(--font-display); font-size: 1.12rem; }
+  .strip figcaption { font-size: 0.85rem; color: var(--muted); }
+
+  .about-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 56px; align-items: center; }
+  @media (max-width: 880px) { .about-grid { grid-template-columns: 1fr; } }
+  .about-photo { max-width: 360px; }
+  .about-photo .tag { font-size: 1.15rem; }
+  .lead-line { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.5; }
+  .services { padding-left: 1.1rem; color: var(--muted); columns: 2; gap: 2rem; font-size: 0.95rem; max-width: 56ch; margin-bottom: 1.6rem; }
+  @media (max-width: 600px) { .services { columns: 1; } }
+  .services li { margin: 0.3rem 0; break-inside: avoid; }
+
+  .podcast { background: var(--deep); color: var(--on-deep); }
+  .podcast .eyebrow, .pod-sub { color: var(--mint); }
+  .pod-sub { font-size: 1.25rem; margin: 0.2rem 0 1rem; }
+  .pod-grid { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: 48px; align-items: center; }
+  @media (max-width: 880px) { .pod-grid { grid-template-columns: 1fr; } }
+  .pod-art { border-radius: var(--radius); box-shadow: var(--shadow); max-width: 340px; width: 100%; }
+  .ep { display: flex; gap: 16px; align-items: baseline; padding: 16px 4px; border-bottom: 1px solid var(--deep-2); text-decoration: none; color: var(--on-deep); }
+  .ep:hover { background: var(--deep-2); }
+  .ep .n { color: var(--mint); font-size: 0.85rem; }
+  .ep b { font-weight: 600; }
+  .ep span span { display: block; font-size: 0.83rem; color: var(--on-deep-muted); margin-top: 2px; }
+  .more { display: inline-block; margin-top: 1.4rem; color: var(--mint); font-weight: 600; text-decoration: none; }
+  .more:hover { text-decoration: underline; }
+
+  .cta-band { background: var(--mint); color: #14211e; }
+  .cta-band .inner { display: flex; gap: 26px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding-block: 44px; }
+  .cta-band h2 { color: #14211e; }
+  .cta-band p { color: #2b423c; margin: 0.5rem 0 0; }
+  .cta-band .btn { background: #14211e; color: var(--mint); border-color: #14211e; }
+</style>

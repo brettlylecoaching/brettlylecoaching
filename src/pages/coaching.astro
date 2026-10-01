@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import OfferCards from '../components/OfferCards.astro';
+import Testimonials from '../components/Testimonials.astro';
+import { services } from '../data/site';
+
+const steps = [
+  { title: 'Identify your goals', body: 'Get clear on what you want next, and why it matters to you.' },
+  { title: 'Write a winning strategy', body: 'Brand, network, and story: a plan built for your situation.' },
+  { title: 'Realize your success', body: 'Take the steps, with accountability and support along the way.' },
+];
+---
+<Base title="Coaching" description="Online courses and 1:1 career coaching with Brett Lyle. Start with a free consultation.">
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Coaching &amp; courses</p>
+      <h1>Find the program that’s right for you.</h1>
+      <p class="intro muted">Every engagement starts with a free consultation, so you never have to guess which option fits.</p>
+      <ol class="steps">
+        {steps.map((s, i) => (
+          <li><span class="num">{i + 1}</span><h3>{s.title}</h3><p class="muted">{s.body}</p></li>
+        ))}
+      </ol>
+      <OfferCards />
+    </div>
+  </section>
+  <section class="band">
+    <div class="wrap two">
+      <div>
+        <p class="eyebrow">How Brett can help</p>
+        <h2>Everything your next move needs.</h2>
+      </div>
+      <ul class="svc">{services.map((s) => <li>{s}</li>)}</ul>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><p class="eyebrow">Client stories</p><h2>What clients say</h2></div>
+      <Testimonials />
+    </div>
+  </section>
+</Base>
+<style>
+  .intro { font-size: 1.08rem; margin: 1rem 0 2.4rem; }
+  .steps { list-style: none; padding: 0; margin: 0 0 3rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 880px) { .steps { grid-template-columns: 1fr; } }
+  .steps li { border-top: 2px solid var(--mint); padding-top: 1rem; }
+  .num { font-family: var(--font-script); font-size: 2rem; color: var(--mint-ink); line-height: 1; }
+  .steps p { margin: 0; font-size: 0.95rem; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+  .svc { columns: 2; gap: 2rem; padding-left: 1.1rem; color: var(--muted); }
+  .svc li { margin: 0.4rem 0; break-inside: avoid; }
+</style>

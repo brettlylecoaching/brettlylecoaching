@@ -1,0 +1,32 @@
+{
+  "name": "brettlylecoaching",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Brett Lyle Coaching: Astro site on Cloudflare Pages with a Formaloo-backed contact form.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler pages dev ./dist",
+    "check": "astro check && tsc -p functions/tsconfig.json",
+    "test": "vitest run",
+    "import:podcast": "node scripts/import-podcast.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/karla": "^5.3.0",
+    "@fontsource/caveat": "^5.3.0",
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/sitemap": "^3.7.4",
+    "@cloudflare/workers-types": "^5.20261001.1",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3",
+    "wrangler": "^4.145.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

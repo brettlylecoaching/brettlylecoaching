@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import { testimonials } from '../data/site';
+import rebekah from '../assets/client-rebekah.jpg';
+import christy from '../assets/client-christy.jpg';
+import kate from '../assets/client-kate.jpg';
+const photos = { rebekah, christy, kate } as const;
+---
+<div class="t-cards">
+  {testimonials.map((t) => (
+    <figure class="card">
+      <blockquote>{t.quote}</blockquote>
+      <figcaption>
+        <Image src={photos[t.photo]} alt="" width={46} height={46} densities={[1, 2]} />
+        <span><b>{t.name}</b><span>{t.place}</span></span>
+      </figcaption>
+    </figure>
+  ))}
+</div>
+<style>
+  .t-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 880px) { .t-cards { grid-template-columns: 1fr; } }
+  figure { margin: 0; gap: 1rem; }
+  blockquote { margin: 0; font-size: 0.97rem; }
+  blockquote::before { content: '\201C'; font-family: var(--font-display); font-size: 2.4rem; line-height: 0; display: block; color: var(--mint); margin: 0.6rem 0 0.9rem; }
+  figcaption { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+  figcaption img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; }
+  figcaption b { display: block; font-size: 0.92rem; }
+  figcaption span span { font-size: 0.8rem; color: var(--muted); }
+</style>

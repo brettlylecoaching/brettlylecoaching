@@ -1,0 +1,34 @@
+---
+import { site, nav } from '../data/site';
+import Logo from './Logo.astro';
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="wrap grid">
+    <div>
+      <div class="logo-tile"><Logo width={190} /></div>
+      <p class="tag">Craft your brand. Set your goal. Tell your story.</p>
+      <div class="socials">
+        {site.socials.map((s) => <a href={s.href} rel="me noopener" target="_blank">{s.label}</a>)}
+      </div>
+    </div>
+    <nav aria-label="Footer">
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+      <a href="/contact">Contact</a>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </nav>
+  </div>
+  <div class="wrap legal">© {year} Brett Lyle Coaching.</div>
+</footer>
+<style>
+  footer { background: var(--deep); color: var(--on-deep-muted); padding: 48px 0 30px; font-size: 0.9rem; }
+  .grid { display: flex; justify-content: space-between; gap: 28px; flex-wrap: wrap; }
+  /* Her logo is designed for light backgrounds, so it sits on a light tile here. */
+  .logo-tile { display: inline-block; background: #fff; border-radius: 8px; padding: 10px 14px; }
+  .tag { margin: 0.2rem 0 0.8rem; }
+  a { color: var(--on-deep); text-decoration: none; }
+  a:hover { color: var(--mint); }
+  .socials { display: flex; gap: 18px; flex-wrap: wrap; }
+  nav { display: flex; flex-direction: column; gap: 0.45rem; }
+  .legal { margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid var(--deep-2); font-size: 0.78rem; }
+</style>

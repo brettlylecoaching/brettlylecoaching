@@ -1,0 +1,68 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import OfferCards from '../components/OfferCards.astro';
+import portrait from '../assets/brett-portrait.jpg';
+---
+<Base title="Meet Brett" description="Brett Lyle's story: from a decade in EMS and healthcare strategy to helping professionals find career success.">
+  <section>
+    <div class="wrap story">
+      <div class="arch photo">
+        <Image src={portrait} alt="Brett Lyle seated on stone steps, smiling, in a sea-glass green blouse" widths={[380, 600]} sizes="380px" loading="eager" />
+      </div>
+      <article>
+        <p class="eyebrow">Brett’s story</p>
+        <h1>The why.</h1>
+        <p class="lead">
+          I am an adventurous soul, always learning and growing. I love music, architecture, photography, food, and
+          writing. I am passionate about cultures, people, and the art of communication.
+        </p>
+        <p>
+          My personal goal is simple: to live a life that brings joy and purpose. I find my fulfillment in using my
+          experiences to help others determine, create, and live passionately.
+        </p>
+        <p class="mantra">Design your life. Be intentional and accountable. Find true success and fulfillment. Reflect. Re-evaluate. Repeat.</p>
+
+        <h2>It wasn’t always easy.</h2>
+        <p>
+          I’ve been fueled by mental resilience, emotional intelligence, self-awareness, and reflection. I have never
+          been one to accept “because I said so” or “this is how we’ve always done it.”
+        </p>
+        <p>
+          Understanding history matters, but it need not define your next chapter. Our experiences shape who we are,
+          and who we become.
+        </p>
+        <div class="letter">
+          <p>
+            You can be whoever you want to be. You can do anything you put your mind to. You have that special thing
+            inside of you that will get you there… and I’m going to help you find it.
+          </p>
+          <p class="script sign">Sincerely, Brett</p>
+        </div>
+      </article>
+    </div>
+  </section>
+  <section class="band">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Uncover your professional success</p>
+        <h2>Ways to get started</h2>
+      </div>
+      <OfferCards />
+    </div>
+  </section>
+</Base>
+<style>
+  .story { display: grid; grid-template-columns: 0.7fr 1.3fr; gap: clamp(32px, 6vw, 72px); align-items: start; }
+  @media (max-width: 880px) { .story { grid-template-columns: 1fr; } }
+  .photo { max-width: 380px; position: sticky; top: 100px; }
+  @media (max-width: 880px) { .photo { position: static; margin: 0 auto; } }
+  h1 { margin-bottom: 1.2rem; }
+  h2 { margin: 2.6rem 0 1rem; font-size: clamp(1.5rem, 3vw, 2rem); }
+  .lead { font-family: var(--font-display); font-size: 1.3rem; line-height: 1.5; }
+  article p:not(.lead):not(.eyebrow) { color: var(--muted); }
+  .mantra { border-left: 3px solid var(--mint); padding-left: 1rem; font-style: italic; }
+  .letter { margin-top: 2rem; padding: 1.6rem 1.8rem; background: var(--band); border-radius: 10px; }
+  .letter p { color: var(--ink) !important; font-size: 1.05rem; }
+  .sign { font-size: 1.9rem; margin: 0.4rem 0 0; color: var(--mint-ink) !important; }
+</style>

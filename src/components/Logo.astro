@@ -1,0 +1,14 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brett-lyle-coaching-logo.png';
+
+interface Props { width?: number }
+const { width = 170 } = Astro.props;
+---
+<a class="logo" href="/" aria-label="Brett Lyle Coaching, home">
+  <Image src={logo} alt="Brett Lyle Coaching" width={width} densities={[1, 2]} loading="eager" />
+</a>
+<style>
+  .logo { display: inline-block; line-height: 0; }
+  .logo img { height: auto; }
+</style>

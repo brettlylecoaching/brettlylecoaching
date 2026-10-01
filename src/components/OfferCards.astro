@@ -1,0 +1,26 @@
+---
+import { offers } from '../data/site';
+---
+<div class="cards">
+  {offers.map((o) => (
+    <article class:list={['card', { soon: o.comingSoon }]}>
+      <span class="kind">{o.kind}</span>
+      <h3>{o.title}</h3>
+      <p>{o.body}</p>
+      <span class="price">{o.price}</span>
+      <a class="btn" href={o.cta.href}>{o.cta.label}</a>
+    </article>
+  ))}
+</div>
+<style>
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 880px) { .cards { grid-template-columns: 1fr; } }
+  .card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .soon { border-style: dashed; }
+  .kind { font-family: var(--font-display); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.66rem; color: var(--mint-ink); }
+  h3 { font-size: 1.22rem; }
+  p { color: var(--muted); font-size: 0.95rem; margin: 0.2rem 0 1rem; }
+  .price { font-size: 0.85rem; font-weight: 600; margin-top: auto; padding-top: 0.6rem; }
+  .btn { align-self: flex-start; margin-top: 0.7rem; }
+</style>

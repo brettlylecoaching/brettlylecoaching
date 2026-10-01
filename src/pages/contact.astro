@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { site } from '../data/site';
+---
+<Base title="Book a free consultation" description="Tell Brett where you are and where you want to go. The first conversation is free.">
+  <section class="contact-page">
+    <div class="wrap grid">
+      <aside>
+        <p class="eyebrow">Free consultation</p>
+        <h1>Let’s talk about your next chapter.</h1>
+        <p class="script kicker">The first conversation is on me.</p>
+        <p class="muted">
+          Whether you’re changing careers, chasing a promotion, or just feel stuck, a short conversation is the
+          easiest way to see if coaching is the right fit. Tell me a little about where you are, and I’ll reach out
+          to find a time.
+        </p>
+        {/* TODO(brett): confirm consult length and format. */}
+        <ul class="what">
+          <li><b>30 minutes</b>, by phone or video</li>
+          <li><b>No prep needed</b>: just bring your questions</li>
+          <li><b>No pressure</b>: you’ll leave with at least one next step</li>
+        </ul>
+        <p class="direct">Prefer email? <a href={`mailto:${site.email}`}>{site.email}</a></p>
+      </aside>
+      <div class="panel">
+        <ContactForm />
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .contact-page { background: linear-gradient(180deg, var(--band), var(--ground) 60%); }
+  .grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(32px, 6vw, 72px); align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  h1 { font-size: clamp(2.1rem, 4.4vw, 3.1rem); }
+  .kicker { font-size: 1.6rem; margin: 0.6rem 0 1rem; }
+  .what { list-style: none; padding: 0; margin: 1.6rem 0; display: grid; gap: 0.7rem; }
+  .what li { padding-left: 1.6rem; position: relative; color: var(--muted); }
+  .what li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--mint); }
+  .what b { color: var(--ink); }
+  .direct { font-size: 0.92rem; color: var(--muted); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: clamp(22px, 4vw, 40px); box-shadow: var(--shadow); }
+</style>

@@ -1,0 +1,184 @@
+---
+import { helpTopics, site } from '../data/site';
+
+// Public by design. Cloudflare's always-pass test key keeps local dev working.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+
+---
+<form class="contact" method="post" action="/api/contact" novalidate data-contact data-email={site.email}>
+  <div class="row two">
+    <label class="field">
+      <span>Your name <i aria-hidden="true">*</i></span>
+      <input name="name" autocomplete="name" required maxlength="120" />
+      <small class="err" data-err="name"></small>
+    </label>
+    <label class="field">
+      <span>Email <i aria-hidden="true">*</i></span>
+      <input name="email" type="email" autocomplete="email" required maxlength="254" />
+      <small class="err" data-err="email"></small>
+    </label>
+  </div>
+
+  <label class="field">
+    <span>Phone <em>(optional)</em></span>
+    <input name="phone" type="tel" autocomplete="tel" maxlength="32" />
+    <small class="err" data-err="phone"></small>
+  </label>
+
+  <fieldset class="field">
+    <legend>What would you like help with? <em>(pick any)</em></legend>
+    <div class="chips">
+      {helpTopics.map((topic) => (
+        <label class="chip">
+          <input type="checkbox" name="topics" value={topic} />
+          <span>{topic}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <label class="field">
+    <span>Where are you now, and where do you want to go? <i aria-hidden="true">*</i></span>
+    <textarea name="message" rows="6" required maxlength="5000"></textarea>
+    <small class="err" data-err="message"></small>
+  </label>
+
+  <!-- Spam traps: humans never see or fill these. -->
+  <label class="hp" aria-hidden="true">Company<input name="company" tabindex="-1" autocomplete="off" /></label>
+  <input type="hidden" name="startedAt" value="" />
+
+  <!-- Cloudflare Turnstile: invisible unless Cloudflare suspects a bot. -->
+  <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-appearance="interaction-only" data-theme="light" data-action="contact"></div>
+
+  <div class="actions">
+    <button class="btn solid" type="submit">Send to Brett</button>
+    <p class="note">Brett replies personally, usually within two business days.</p>
+  </div>
+  <p class="status" role="status" aria-live="polite"></p>
+</form>
+
+<div class="sent" hidden data-sent>
+  <p class="script big">Thank you!</p>
+  <h2>Your note is on its way.</h2>
+  <p class="muted">Brett will be in touch soon to find a time to talk. In the meantime, the <a href="/podcast">Emergent Leadership podcast</a> is a good place to get to know her.</p>
+</div>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact]');
+  const sent = document.querySelector<HTMLElement>('[data-sent]');
+  if (form && sent) {
+    const started = form.querySelector<HTMLInputElement>('[name="startedAt"]')!;
+    started.value = String(Date.now());
+    const status = form.querySelector<HTMLElement>('.status')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+    const params = new URLSearchParams(location.search);
+    if (params.has('sent')) { form.hidden = true; sent.hidden = false; }
+    const topic = params.get('topic');
+    if (topic) form.querySelectorAll<HTMLInputElement>('[name="topics"]').forEach((c) => { if (c.value === topic) c.checked = true; });
+    if (params.has('error')) status.textContent = 'Something went wrong. Please try again, or email Brett directly.';
+
+    const showErrors = (errors: Record<string, string> = {}) => {
+      form.querySelectorAll<HTMLElement>('[data-err]').forEach((el) => {
+        const msg = errors[el.dataset.err!] ?? '';
+        el.textContent = msg;
+        el.closest('.field')?.classList.toggle('invalid', Boolean(msg));
+      });
+      const first = Object.keys(errors)[0];
+      if (first) form.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const body = Object.fromEntries(data);
+      (body as Record<string, unknown>).topics = data.getAll('topics');
+
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      status.textContent = '';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && json.ok) {
+          form.hidden = true;
+          sent.hidden = false;
+          sent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        // Turnstile tokens are single-use; get a fresh one for the retry.
+        (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
+        if (json.errors) showErrors(json.errors);
+        status.textContent = json.error ?? (json.errors ? 'Please check the highlighted fields.' : 'Something went wrong. Please try again.');
+      } catch {
+        status.textContent = `Couldn't reach the server. Please try again, or email ${form.dataset.email}.`;
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Send to Brett';
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact { display: grid; gap: 1.35rem; }
+  .row.two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.35rem; }
+  @media (max-width: 640px) { .row.two { grid-template-columns: 1fr; } }
+
+  .field { display: grid; gap: 0.45rem; border: 0; padding: 0; margin: 0; min-width: 0; }
+  .field > span, legend { font-weight: 700; font-size: 0.95rem; padding: 0; }
+  .field i { color: var(--mint-ink); font-style: normal; }
+  .field em { font-weight: 400; font-style: normal; color: var(--muted); font-size: 0.88rem; }
+
+  input:not([type='checkbox']), textarea {
+    width: 100%; font: inherit; color: var(--ink); background: var(--field);
+    border: 1.5px solid var(--line); border-radius: 6px; padding: 0.8em 0.95em;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  textarea { resize: vertical; min-height: 9rem; }
+  input:hover, textarea:hover { border-color: color-mix(in srgb, var(--mint-ink) 35%, var(--line)); }
+  input:focus, textarea:focus {
+    outline: none; background: var(--panel); border-color: var(--mint-ink);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--mint) 35%, transparent);
+  }
+  .invalid input, .invalid textarea { border-color: var(--danger); }
+  .err { color: var(--danger); font-size: 0.84rem; min-height: 0; }
+  .err:empty { display: none; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.25rem; }
+  .chip { position: relative; cursor: pointer; }
+  .chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .chip span {
+    display: inline-flex; align-items: center; gap: 0.45em; padding: 0.55em 1em; border-radius: 999px;
+    border: 1.5px solid var(--line); background: var(--panel); font-size: 0.92rem; font-weight: 600;
+    transition: all 0.15s ease; user-select: none;
+  }
+  .chip span::before {
+    content: ''; width: 0.95em; height: 0.95em; border-radius: 50%; border: 1.5px solid var(--muted);
+    transition: all 0.15s ease;
+  }
+  .chip:hover span { border-color: var(--mint-ink); }
+  .chip input:checked + span { background: color-mix(in srgb, var(--mint) 30%, var(--panel)); border-color: var(--mint-ink); color: var(--ink); }
+  .chip input:checked + span::before { background: var(--mint-ink); border-color: var(--mint-ink); box-shadow: inset 0 0 0 2px var(--panel); }
+  .chip input:focus-visible + span { outline: 3px solid var(--mint); outline-offset: 2px; }
+
+  .cf-turnstile:empty { display: none; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .actions { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.3rem; }
+  .actions .btn { background: var(--sea); border-color: var(--sea); color: #fff; }
+  .note { margin: 0; font-size: 0.88rem; color: var(--muted); }
+  .status { margin: 0; color: var(--danger); font-weight: 600; }
+  .status:empty { display: none; }
+
+  .sent { text-align: center; padding: 2.5rem 1rem; }
+  .sent .big { font-size: 2.6rem; margin: 0; }
+  .sent h2 { margin: 0.2rem 0 0.8rem; }
+  .sent p { margin-inline: auto; }
+</style>

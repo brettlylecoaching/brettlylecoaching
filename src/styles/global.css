@@ -1,0 +1,90 @@
+/* Brett Lyle Coaching: sea-glass palette, Fraunces display, Karla text, Caveat accents. */
+
+:root {
+  --ground: #fbfaf6;
+  --panel: #ffffff;
+  --band: #f2efe6;
+  --ink: #26312f;
+  --muted: #5d6d69;
+  --mint: #8ce2c8;
+  --mint-ink: #177a63;
+  --sea: #0f6653;
+  --deep: #142320;
+  --deep-2: #1b2f2b;
+  --on-deep: #e9f2ee;
+  --on-deep-muted: #9eb5ad;
+  --line: #e2ded2;
+  --field: #f6f3ec;
+  --danger: #a33a3a;
+  --shadow: 0 18px 40px -18px rgba(28, 52, 46, 0.25);
+  --radius: 8px;
+  --font-display: 'Fraunces Variable', Georgia, serif;
+  --font-text: 'Karla Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-script: 'Caveat', cursive;
+  color-scheme: light;
+}
+
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 16.5px/1.7 var(--font-text);
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--sea); }
+:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 clamp(16px, 6vw, 72px); }
+.eyebrow {
+  font-family: var(--font-display); font-weight: 540; letter-spacing: 0.34em; text-transform: uppercase;
+  font-size: 0.72rem; color: var(--mint-ink); margin: 0 0 0.9rem;
+}
+.script { font-family: var(--font-script); font-weight: 700; color: var(--mint-ink); }
+h1, h2 { font-family: var(--font-display); font-weight: 540; line-height: 1.08; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.4rem, 5.6vw, 4rem); }
+h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
+h3 { font-weight: 800; font-size: 1.06rem; margin: 0 0 0.4rem; }
+p { max-width: 62ch; }
+.muted { color: var(--muted); }
+
+section { padding: clamp(56px, 8vw, 88px) 0; }
+.sec-head { margin-bottom: 2.2rem; }
+.band { background: var(--band); border-block: 1px solid var(--line); }
+
+.btn {
+  display: inline-block; font: 800 0.95rem var(--font-text); text-decoration: none; cursor: pointer;
+  padding: 0.85em 1.7em; border: 2px solid var(--mint); border-radius: 3px; background: transparent; color: var(--ink);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -12px rgba(23, 122, 99, 0.55); }
+.btn.solid { background: var(--mint); color: #14211e; }
+.btn[disabled] { opacity: 0.6; cursor: progress; transform: none; }
+
+.arch { border-radius: 999px 999px 6px 6px; overflow: hidden; box-shadow: var(--shadow); position: relative; }
+.arch img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 5; }
+.arch .tag {
+  position: absolute; bottom: 14px; left: 14px; right: 14px; border-radius: 6px; padding: 0.55em 0.9em;
+  background: color-mix(in srgb, var(--panel) 82%, transparent); backdrop-filter: blur(6px); font-size: 0.9rem;
+}
+
+.card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 16px; top: 12px; z-index: 100; background: var(--panel); padding: 0.5em 1em; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise { animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .rise.d1 { animation-delay: 0.08s; }
+  .rise.d2 { animation-delay: 0.16s; }
+  @keyframes rise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}

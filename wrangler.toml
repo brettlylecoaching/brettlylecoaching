@@ -1,0 +1,8 @@
+name = "brettlylecoaching"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-09-01"
+
+[vars]
+# Public, non-secret config. Secrets go in the Pages dashboard (or .dev.vars locally):
+#   FORMALOO_API_KEY, FORMALOO_SECRET_KEY
+FORMALOO_FORM_SLUG = "Ap5DJmgO"

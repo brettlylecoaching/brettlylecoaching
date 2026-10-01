@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { byNewest, episodeHref, formatDate } from '../../lib/episodes';
+import cover from '../../assets/podcast-cover.png';
+
+const episodes = (await getCollection('episodes')).sort(byNewest);
+---
+<Base title="Emergent Leadership podcast" description="Conversations with passionate leaders who share their stories, perspectives, and lessons learned. Hosted by Brett Lyle.">
+  <section class="head">
+    <div class="wrap grid">
+      <Image class="cover" src={cover} alt="Emergent Leadership podcast cover art" widths={[300, 500]} sizes="300px" loading="eager" />
+      <div>
+        <p class="eyebrow">The podcast</p>
+        <h1>Emergent Leadership</h1>
+        <p class="script sub">conversations with passionate leaders</p>
+        <p class="muted">
+          Leaders who just have to share their stories, perspectives, and most importantly, lessons learned. From EMS
+          and healthcare to entrepreneurship and education. {episodes.length} episodes.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <ol class="list">
+        {episodes.map((ep) => (
+          <li>
+            <a href={episodeHref(ep)}>
+              <time datetime={ep.data.published.toISOString()}>{formatDate(ep.data.published)}</time>
+              <h2>{ep.data.title}</h2>
+              {ep.data.guest && <p class="guest">with {ep.data.guest}</p>}
+              <p class="muted">{ep.data.summary}</p>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</Base>
+<style>
+  .head { background: var(--deep); color: var(--on-deep); }
+  .head .eyebrow, .sub { color: var(--mint); }
+  .head .muted { color: var(--on-deep-muted); }
+  .grid { display: grid; grid-template-columns: 300px 1fr; gap: 44px; align-items: center; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .cover { border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; max-width: 300px; }
+  .sub { font-size: 1.4rem; margin: 0.3rem 0 0.8rem; }
+  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .list a { display: block; padding: 22px 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: inherit; text-decoration: none; transition: border-color 0.15s ease, transform 0.15s ease; }
+  .list a:hover { border-color: var(--mint-ink); transform: translateX(4px); }
+  time { font-size: 0.8rem; color: var(--mint-ink); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .list h2 { font-family: var(--font-text); font-weight: 800; font-size: 1.12rem; margin: 0.3rem 0 0.1rem; line-height: 1.35; }
+  .guest { margin: 0; font-size: 0.9rem; font-weight: 600; }
+  .list p.muted { margin: 0.4rem 0 0; font-size: 0.94rem; }
+</style>

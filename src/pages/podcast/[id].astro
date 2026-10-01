@@ -1,0 +1,69 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { byNewest, episodeHref, formatDate } from '../../lib/episodes';
+import cover from '../../assets/podcast-cover.png';
+
+export async function getStaticPaths() {
+  const episodes = (await getCollection('episodes')).sort(byNewest);
+  return episodes.map((ep, i) => ({
+    params: { id: ep.id },
+    props: { ep, newer: episodes[i - 1], older: episodes[i + 1] },
+  }));
+}
+
+type Props = { ep: CollectionEntry<'episodes'>; newer?: CollectionEntry<'episodes'>; older?: CollectionEntry<'episodes'> };
+const { ep, newer, older } = Astro.props;
+const { Content } = await render(ep);
+const minutes = ep.data.durationSeconds ? Math.round(ep.data.durationSeconds / 60) : undefined;
+---
+<Base title={ep.data.title} description={ep.data.summary}>
+  <article>
+    <header class="ep-head">
+      <div class="wrap grid">
+        <Image class="cover" src={cover} alt="" widths={[200, 400]} sizes="200px" loading="eager" />
+        <div>
+          <a class="back" href="/podcast">← Emergent Leadership</a>
+          <h1>{ep.data.title}</h1>
+          <p class="meta">
+            {ep.data.guest && <span>with {ep.data.guest} · </span>}
+            <time datetime={ep.data.published.toISOString()}>{formatDate(ep.data.published)}</time>
+            {minutes && <span> · {minutes} min</span>}
+          </p>
+          {ep.data.audio
+            ? <audio controls preload="none" src={ep.data.audio}>Your browser can’t play this audio. <a href={ep.data.audio}>Download the episode</a>.</audio>
+            : <p class="pending">Audio is moving to its new home. Check back soon.</p>}
+        </div>
+      </div>
+    </header>
+    <section>
+      <div class="wrap body">
+        <h2 class="eyebrow">Show notes</h2>
+        <Content />
+        <nav class="pager" aria-label="More episodes">
+          {newer ? <a href={episodeHref(newer)}><small>Newer</small>{newer.data.title}</a> : <span />}
+          {older && <a class="older" href={episodeHref(older)}><small>Older</small>{older.data.title}</a>}
+        </nav>
+      </div>
+    </section>
+  </article>
+</Base>
+<style>
+  .ep-head { background: var(--deep); color: var(--on-deep); padding: clamp(40px, 6vw, 72px) 0; }
+  .grid { display: grid; grid-template-columns: 200px 1fr; gap: 36px; align-items: center; }
+  @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } .cover { max-width: 140px; } }
+  .cover { border-radius: var(--radius); width: 100%; }
+  .back { color: var(--mint); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+  h1 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); margin: 0.6rem 0; }
+  .meta { color: var(--on-deep-muted); margin: 0 0 1.2rem; }
+  audio { width: 100%; max-width: 560px; }
+  .pending { color: var(--mint); font-weight: 600; }
+  .body { max-width: 760px; }
+  .body :global(p) { color: var(--muted); }
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 3rem; border-top: 1px solid var(--line); padding-top: 1.6rem; }
+  .pager a { text-decoration: none; color: var(--ink); font-weight: 600; }
+  .pager a:hover { color: var(--mint-ink); }
+  .pager small { display: block; color: var(--mint-ink); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; }
+  .older { text-align: right; }
+</style>
